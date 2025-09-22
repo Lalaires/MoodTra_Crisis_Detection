@@ -1,33 +1,21 @@
-# Base image for Python
-FROM python:3.12-slim
+FROM public.ecr.aws/lambda/python:3.13 
 
-# Add AWS Lambda Web Adapter (no code changes in FastAPI needed)
-COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.8.4 /lambda-adapter /opt/extensions/lambda-adapter
+COPY requirements.txt  ${LAMBDA_TASK_ROOT} 
+  
+# Install function dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-ENV PIP_NO_CACHE_DIR=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    HOME=/tmp \
-    HF_HOME=/tmp/hf \
-    TRANSFORMERS_CACHE=/tmp/transformers \
-    XDG_CACHE_HOME=/tmp \
-    TORCH_HOME=/tmp/torch \
-    NLTK_DATA=/tmp/nltk_data \
-    MPLCONFIGDIR=/tmp/matplotlib \
-    NUMBA_CACHE_DIR=/tmp/numba_cache
+# Copy function code
+COPY main.py ${LAMBDA_TASK_ROOT}
+COPY crisis_pipeline.py ${LAMBDA_TASK_ROOT}
 
-WORKDIR /app
+# Set environment variables
+ENV DB_HOST=url_to_db   
+ENV DB_NAME=name_of_db
+ENV DB_USER=user_of_db
+ENV DB_PASSWORD=password_of_db
+ENV DB_PORT=port_of_db
+ENV HF_HOME=/tmp/hf 
 
-# Install dependencies
-COPY ./requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
-
-# Copy application code
-COPY ./api /app/api
-COPY ./AI  /app/AI
-
-# The web adapter forwards requests to this port
-ENV PORT=8000
-
-# Run Uvicorn; the adapter proxies API Gateway/Function URL to this server
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Set the CMD to your handler
+CMD [ "main.lambda_handler" ]

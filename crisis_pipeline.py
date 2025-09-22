@@ -4,6 +4,11 @@ import torch
 import torch.nn.functional as F
 import string
 from typing import Dict, Tuple
+import logging
+
+# Configure logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class CrisisDetector:
     def __init__(self):
@@ -14,7 +19,6 @@ class CrisisDetector:
 
         # Pre-compute mappings ONCE during initialization
         self.label_mapping = {0: "Anxiety", 1: "Normal", 2: "Depression", 3: "Suicidal", 4: "Stress"}
-        
         self.severity_scores = {
             "normal": 0.0,
             "stress": 0.8,
@@ -22,7 +26,6 @@ class CrisisDetector:
             "depression": 0.9,
             "suicidal": 1.0
         }
-        
         self.condition_scaling = {
             "normal": 0.3,           
             "no mental disorders": 0.3,
@@ -34,12 +37,11 @@ class CrisisDetector:
             "self-harm": 1.0,
             "emergency": 1.0
         }
-        
         # Pre-compute severity level thresholds
         self.severity_thresholds = [
-            (0.8, "extremely_high"),
-            (0.7, "high"),
-            (0.5, "medium"),
+            (0.89, "extremely_high"),
+            (0.79, "high"),
+            (0.59, "medium"),
             (0.0, "low")
         ]
 
@@ -116,6 +118,7 @@ class CrisisDetector:
                 print(f"Condition: '{condition}'")
                 print(f"Scaling factor: {scaling_factor}")
                 print(f"Final score: {final_score:.3f}")
+                print(f"Severity level: {severity_level}")
                 return severity_level
 
         return "low"
@@ -126,7 +129,7 @@ class CrisisDetector:
         all_probs, top_prediction = self.crisis_diagnosis(text)
 
         score = self.severity_score(all_probs)
-        if score >= 0.5:
+        if score >= 0.6:
             # Get detailed analysis
             condition, completion = self.crisis_analysis(text)
             severity = self.severity_scaling(score, condition)
@@ -139,11 +142,12 @@ class CrisisDetector:
             else:
                 return {
                     "crisis_name": top_prediction,
+                    "crisis_note": None, 
                     "severity": severity
                 }
         else:
-            severity = "low"
             return {
-                    "crisis_name": top_prediction,
-                    "severity": severity
-                }
+                "crisis_name": top_prediction,
+                "crisis_note": None, 
+                "severity": "low"
+            }

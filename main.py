@@ -4,17 +4,33 @@ import psycopg2.extras
 import os
 import logging
 from uuid import uuid4
-from datetime import datetime
-
-DB_HOST = "db-ta24-mindpal.cnwcamiuul3a.ap-southeast-4.rds.amazonaws.com"   
-DB_NAME = "postgres"
-DB_USER = "ta24"
-DB_PASSWORD = "cojxe8-zofzox-huzgYk"
-DB_PORT = 5432
+from datetime import datetime, timezone
+from crisis_pipeline import CrisisDetector
 
 # Configure logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
+# Lazy-initialized singleton for CrisisDetector to avoid reloading models repeatedly
+_crisis_detector = None
+
+def get_crisis_detector():
+    global _crisis_detector
+    if _crisis_detector is None:
+        logger.info("Initializing CrisisDetector models...")
+        _crisis_detector = CrisisDetector()
+        logger.info("CrisisDetector initialized.")
+    return _crisis_detector
+
+def _normalize_to_utc(dt):
+    """
+    Ensure a datetime is timezone-aware and in UTC.
+    """
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
 
 def create_connection():
     """
@@ -25,11 +41,11 @@ def create_connection():
         
         # Get database credentials from environment variables
         connection = psycopg2.connect(
-            host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_NAME,
-            port=DB_PORT,
+            host=os.getenv('DB_HOST'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD'),
+            database=os.getenv('DB_NAME'),
+            port=os.getenv('DB_PORT'),
             connect_timeout=10
         )
         
@@ -68,10 +84,11 @@ def execute_query(connection, query, params=None):
 def fetch_latest_child_messages(connection, account_id, limit=10):
     """
     Fetch the latest child messages from the chat_message table for a specific account
+    Returns messages and the timestamp of the latest message
     """
     try:
         query = """
-        SELECT cm.message_text
+        SELECT cm.message_text, cm.message_ts
         FROM chat_message cm
         JOIN chat_session cs ON cm.session_id = cs.session_id
         WHERE cm.message_role = 'child' AND cs.account_id = %s
@@ -85,43 +102,69 @@ def fetch_latest_child_messages(connection, account_id, limit=10):
         logger.error(f"Error fetching child messages: {e}")
         raise e
 
-def get_or_create_crisis_id(connection, crisis_name):
+def get_all_account_ids(connection):
     """
-    Get existing crisis_id or create new crisis entry
+    Get all account IDs from the account table
     """
     try:
-        # First, try to get existing crisis
-        select_query = "SELECT crisis_id FROM crisis WHERE crisis_name = %s"
-        existing = execute_query(connection, select_query, (crisis_name,))
-        
-        if existing:
-            return existing[0]['crisis_id']
-        
-        # If not found, create new crisis entry
-        insert_query = "INSERT INTO crisis (crisis_name) VALUES (%s)"
-        execute_query(connection, insert_query, (crisis_name,))
-        
-        # Get the newly created crisis_id
-        new_crisis = execute_query(connection, select_query, (crisis_name,))
-        return new_crisis[0]['crisis_id']
-        
+        query = """
+        SELECT account_id
+        FROM account
+        ORDER BY account_id
+        """
+        accounts = execute_query(connection, query)
+        logger.info(f"Found {len(accounts)} accounts in database")
+        return [account['account_id'] for account in accounts]
     except Exception as e:
-        logger.error(f"Error getting/creating crisis_id: {e}")
+        logger.error(f"Error fetching account IDs: {e}")
         raise e
 
-def store_crisis_alert(connection, account_id, crisis_id, severity, note=None):
+def get_crisis_id(connection, crisis_name):
+    """
+    Get existing crisis_id entry
+    """
+    try:
+        # get existing crisis
+        select_query = "SELECT crisis_id FROM crisis WHERE crisis_name = %s"
+        existing = execute_query(connection, select_query, (crisis_name,))
+        return existing[0]['crisis_id']
+        
+    except Exception as e:
+        logger.error(f"Error getting crisis_id: {e}")
+        raise e
+
+def get_last_message_timestamp(connection, account_id):
+    """
+    Get the most recent processed message timestamp for an account
+    """
+    try:
+        # Use MAX to get the latest processed message timestamp regardless of alert insertion order
+        query = """
+        SELECT MAX(last_msg_ts) AS last_msg_ts
+        FROM crisis_alert
+        WHERE account_id = %s
+        """
+        result = execute_query(connection, query, (account_id,))
+        if result and result[0]['last_msg_ts']:
+            return result[0]['last_msg_ts']
+        return None
+    except Exception as e:
+        logger.error(f"Error fetching last message timestamp: {e}")
+        raise e
+
+def store_crisis_alert(connection, account_id, crisis_id, severity, note=None, last_msg_ts=None):
     """
     Store crisis alert information in the crisis_alert table
     """
     try:
         crisis_alert_id = str(uuid4())
-        current_time = datetime.now()
+        current_time = datetime.now(timezone.utc)
         
         query = """
         INSERT INTO crisis_alert 
         (crisis_alert_id, account_id, crisis_id, crisis_alert_severity, 
-         crisis_alert_status, crisis_alert_note, crisis_alert_ts)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+         crisis_alert_status, crisis_alert_note, crisis_alert_ts, last_msg_ts)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         
         params = (
@@ -131,7 +174,8 @@ def store_crisis_alert(connection, account_id, crisis_id, severity, note=None):
             severity,
             'pending',  # Default status
             note,  # Can be None/NULL
-            current_time
+            current_time,
+            last_msg_ts  # Timestamp of the latest message processed
         )
         
         result = execute_query(connection, query, params)
@@ -142,122 +186,180 @@ def store_crisis_alert(connection, account_id, crisis_id, severity, note=None):
         logger.error(f"Error storing crisis alert: {e}")
         raise e
 
-def test_database_operations(connection):
+def process_crisis_detection(connection, account_id):
     """
-    Test database connection and basic operations with mock data
+    Process crisis detection for the latest 10 child messages as a batch
     """
     try:
-        logger.info("Starting database operations test")
+        logger.info(f"Starting crisis detection for account: {account_id}")
         
-        # Test 1: Fetch latest 10 child messages for specific account
-        logger.info("Test 1: Fetching child messages")
-        test_account_id = "00000000-0000-0000-0000-00000000C0DE"
-        messages = fetch_latest_child_messages(connection, test_account_id, 10)
-        logger.info(f"Found {len(messages)} child messages")
+        # Fetch latest 10 child messages
+        messages = fetch_latest_child_messages(connection, account_id, 10)
+        logger.info(f"Found {len(messages)} child messages to process as batch")
         
-        # Test 2: Insert mock crisis data
-        logger.info("Test 2: Testing crisis table operations")
-        mock_crisis_name = "suicidal"
-        crisis_id = get_or_create_crisis_id(connection, mock_crisis_name)
-        logger.info(f"Got/created crisis_id: {crisis_id} for '{mock_crisis_name}'")
+        if not messages:
+            logger.info("No child messages found for processing")
+            return {
+                "status": "success",
+                "messages_processed": 0,
+                "alerts_created": 0
+            }
         
-        # Test 3: Insert mock crisis alert
-        logger.info("Test 3: Testing crisis_alert table operations")
-        mock_severity = "extremely_high"
-        mock_note = "The use of the phrase 'I'm going to kill myself' clearly indicates that the person is expressing thoughts of suicide. This is a clear indication of suicidal ideation and a potential mental health concern."
+        # Get the timestamp of the latest message
+        latest_msg_ts = messages[0]['message_ts']  # First message is the latest due to ORDER BY DESC
+        
+        # Skip if we've already processed up to this timestamp (use <= to handle duplicates)
+        last_processed_ts = get_last_message_timestamp(connection, account_id)
+        logger.info(f"Last processed timestamp: {last_processed_ts}")
+
+        # Normalize to UTC to avoid naive/aware comparison errors
+        latest_msg_ts_utc = _normalize_to_utc(latest_msg_ts)
+        last_processed_ts_utc = _normalize_to_utc(last_processed_ts)
+        
+        if last_processed_ts_utc and latest_msg_ts_utc <= last_processed_ts_utc:
+            logger.info(
+                f"Latest message_ts {latest_msg_ts_utc} is not newer than last processed {last_processed_ts_utc} - skipping"
+            )
+            return {
+                "status": "success",
+                "messages_processed": len(messages),
+                "alerts_created": 0,
+                "reason": "messages_already_processed"
+            }
+        
+        # Get lazy-initialized crisis detector
+        crisis_detector = get_crisis_detector()
+
+        # Build chronological, sanitized, and trimmed message context
+        child_history_rows = list(reversed(messages))
+        child_history = [msg.get('message_text') for msg in child_history_rows]
+        lines = []
+        for msg_text in child_history:
+            safe_msg = (msg_text or "").strip()
+            if len(safe_msg) > 800:
+                safe_msg = safe_msg[:800] + " ..."
+            lines.append(f"{safe_msg}")
+        child_history_context = "\n".join(lines)
+        logger.info(
+            f"Processing {len(messages)} messages as newline-joined context"
+        )
+
+        # Process context through crisis detection
+        crisis_result = crisis_detector.detect_crisis(child_history_context)
+        
+        logger.info(f"Crisis detection result: {crisis_result}")
+        
+        # Get or create crisis_id
+        crisis_name = crisis_result.get('crisis_name', 'unknown')
+        crisis_id = get_crisis_id(connection, crisis_name.lower())
+        
+        # Store crisis alert
+        severity = crisis_result.get('severity')
+        note = crisis_result.get('crisis_note')
         
         alert_result = store_crisis_alert(
-            connection, 
-            test_account_id, 
-            crisis_id, 
-            mock_severity, 
-            mock_note
+            connection,
+            account_id,
+            crisis_id,
+            severity,
+            note,
+            latest_msg_ts_utc
         )
+        
         logger.info(f"Crisis alert stored successfully: {alert_result}")
-        
-        # Test 4: Verify the data was inserted correctly
-        logger.info("Test 4: Verifying inserted data")
-        verify_query = """
-        SELECT ca.crisis_alert_id, ca.crisis_alert_severity, ca.crisis_alert_note, 
-               c.crisis_name, ca.crisis_alert_ts
-        FROM crisis_alert ca
-        JOIN crisis c ON ca.crisis_id = c.crisis_id
-        WHERE ca.account_id = %s
-        ORDER BY ca.crisis_alert_ts DESC
-        LIMIT 1
-        """
-        verification = execute_query(connection, verify_query, (test_account_id,))
-        
-        if verification:
-            logger.info(f"Verification successful: {verification[0]}")
-            # Convert datetime to string for JSON serialization
-            verification_data = dict(verification[0])
-            if 'crisis_alert_ts' in verification_data:
-                verification_data['crisis_alert_ts'] = str(verification_data['crisis_alert_ts'])
-        else:
-            logger.warning("No verification data found")
-            verification_data = None
         
         return {
             "status": "success",
-            "messages_found": len(messages),
-            "crisis_id": crisis_id,
-            "alert_result": alert_result,
-            "verification": verification_data,
-            "test_account_id": test_account_id
+            "messages_processed": len(messages),
+            "alerts_created": 1,
+            "crisis_result": crisis_result,
+            "alert_id": alert_result.get('affected_rows', 'unknown')
         }
         
     except Exception as e:
-        logger.error(f"Error in database operations test: {e}")
+        logger.error(f"Error in batch crisis detection processing: {e}")
+        raise e
+
+def process_all_accounts(connection):
+    """
+    Process crisis detection for all accounts in the database and return summary counters only.
+    """
+    try:
+        logger.info("Starting crisis detection for all accounts")
+
+        # Get all account IDs
+        account_ids = get_all_account_ids(connection)
+
+        if not account_ids:
+            logger.info("No accounts found in database")
+            return {
+                "status": "success",
+                "total_accounts": 0,
+                "processed_accounts": 0,
+                "skipped_already_processed": 0,
+                "failed_accounts": 0,
+                "total_alerts_created": 0
+            }
+
+        total_alerts_created = 0
+        processed_accounts = 0
+        skipped_already_processed = 0
+        failed_accounts = 0
+
+        # Process each account
+        for i, account_id in enumerate(account_ids):
+            logger.info(f"Processing account {i+1}/{len(account_ids)}: {account_id}")
+
+            try:
+                result = process_crisis_detection(connection, account_id)
+                processed_accounts += 1
+
+                # Track if we skipped due to already processed messages
+                if result.get("reason") == "messages_already_processed":
+                    skipped_already_processed += 1
+
+                total_alerts_created += result.get("alerts_created", 0)
+
+            except Exception as e:
+                failed_accounts += 1
+                logger.error(f"Error processing account {account_id}: {e}")
+
+        logger.info(
+            f"Crisis detection completed for {len(account_ids)} accounts. "
+            f"Processed: {processed_accounts}, Skipped(already processed): {skipped_already_processed}, "
+            f"Failed: {failed_accounts}, Alerts created: {total_alerts_created}"
+        )
+
+        return {
+            "status": "success",
+            "total_accounts": len(account_ids),
+            "processed_accounts": processed_accounts,
+            "skipped_already_processed": skipped_already_processed,
+            "failed_accounts": failed_accounts,
+            "total_alerts_created": total_alerts_created
+        }
+
+    except Exception as e:
+        logger.error(f"Error in process_all_accounts: {e}")
         raise e
 
 def lambda_handler(event, context):
     """
-    Main Lambda handler function - Database Connection Test
+    Main Lambda handler function - Crisis Detection Pipeline for All Accounts
     """
     connection = None
     
     try:
         logger.info(f"Received event: {json.dumps(event)}")
-        logger.info("Starting Lambda function...")
+        logger.info("Starting Crisis Detection Lambda function for all accounts...")
         
-        # Test 1: Check database configuration
-        logger.info("Test 1: Checking database configuration")
-        db_config = {
-            'DB_HOST': DB_HOST,
-            'DB_USER': DB_USER, 
-            'DB_PASSWORD': DB_PASSWORD,
-            'DB_NAME': DB_NAME,
-            'DB_PORT': DB_PORT
-        }
-        
-        missing_vars = []
-        for var_name, var_value in db_config.items():
-            if not var_value:
-                missing_vars.append(var_name)
-            else:
-                # Mask password for security
-                display_value = '*' * len(var_value) if 'PASSWORD' in var_name else var_value
-                logger.info(f"{var_name}: {display_value}")
-        
-        if missing_vars:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({
-                    'success': False,
-                    'error': f'Missing environment variables: {missing_vars}'
-                })
-            }
-        
-        # Test 2: Attempt database connection
-        logger.info("Test 2: Attempting database connection")
+        # Create database connection
         connection = create_connection()
         
-        # Test 3: query test
-        logger.info("Test 3: Testing database_operations")
-        result = test_database_operations(connection)
+        # Process crisis detection for all accounts
+        result = process_all_accounts(connection)
         
-        logger.info(f"Database operations test completed: {result}")
+        logger.info(f"Crisis detection completed for all accounts: {result}")
         
         # Return success
         return {
@@ -267,8 +369,8 @@ def lambda_handler(event, context):
             },
             'body': json.dumps({
                 'success': True,
-                'message': 'Database operations test completed',
-                'test_result': result
+                'message': 'Crisis detection completed for all accounts',
+                'result': result
             })
         }
         
@@ -290,59 +392,3 @@ def lambda_handler(event, context):
         if connection:
             connection.close()
             logger.info("Database connection closed")
-
-def test_database_workflow():
-    """
-    Test function to demonstrate the database operations workflow
-    This can be called independently for testing purposes
-    """
-    connection = None
-    
-    try:
-        logger.info("Starting database operations workflow test")
-        
-        # Create database connection
-        connection = create_connection()
-        
-        # Run database operations test
-        result = test_database_operations(connection)
-        
-        logger.info(f"Database operations test completed: {result}")
-        return result
-        
-    except Exception as e:
-        logger.error(f"Error in test workflow: {e}")
-        raise e
-    
-    finally:
-        if connection:
-            connection.close()
-            logger.info("Test database connection closed")
-
-# Example SQL table creation (run this separately to set up your database)
-"""
-CREATE TABLE users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Crisis detection related tables (based on model.py schema)
-CREATE TABLE crisis (
-    crisis_id INT AUTO_INCREMENT PRIMARY KEY,
-    crisis_name TEXT NOT NULL
-);
-
-CREATE TABLE crisis_alert (
-    crisis_alert_id VARCHAR(36) PRIMARY KEY,
-    account_id VARCHAR(36) NOT NULL,
-    crisis_id INT NOT NULL,
-    crisis_alert_severity TEXT NOT NULL,
-    crisis_alert_status TEXT NOT NULL,
-    crisis_alert_note TEXT,
-    crisis_alert_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (crisis_id) REFERENCES crisis(crisis_id) ON DELETE CASCADE
-);
-"""
