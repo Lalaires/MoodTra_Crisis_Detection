@@ -1,4 +1,7 @@
-# Byte-compiled / optimized / DLL files
+ecr_auth_token.txt
+dockerscript
+
+ Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
 *$py.class
