@@ -16,6 +16,7 @@ ENV DB_USER=user_of_db
 ENV DB_PASSWORD=password_of_db
 ENV DB_PORT=port_of_db
 ENV HF_HOME=/tmp/hf 
+ENV GOOGLE_API_KEY=gemini_api_key
 
 # Set the CMD to your handler
 CMD [ "main.lambda_handler" ]
