@@ -139,11 +139,11 @@ class CrisisDetector:
 
         10. **Output Formatting**
         - Output **only valid Dictionary** with:
-            {
+            {{
             "crisis_name": "<Anxiety|Normal|Depression|Suicidal|Stress>",
             "crisis_note": "<one-sentence explanation>",
             "severity": "<low|medium|high|extremely high>"
-            }
+            }}
 
         ---
 
