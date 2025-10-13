@@ -2,7 +2,7 @@ import os
 import json
 from typing import Dict, Tuple
 from google import genai
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import torch.nn.functional as F
 import logging
@@ -19,8 +19,6 @@ class CrisisDetector:
 
         self.model = "gemini-2.5-flash-lite"
         self.client = genai.Client(api_key=GOOGLE_API_KEY)
-        self.analysis_tokenizer = AutoTokenizer.from_pretrained("Tianlin668/MentalBART")
-        self.analysis_model = AutoModelForSeq2SeqLM.from_pretrained("Tianlin668/MentalBART")
         self.diagnosis_tokenizer = AutoTokenizer.from_pretrained("ethandavey/mental-health-diagnosis-bert")
         self.diagnosis_model = AutoModelForSequenceClassification.from_pretrained("ethandavey/mental-health-diagnosis-bert")
         self.label_mapping = {0: "Anxiety", 1: "Normal", 2: "Depression", 3: "Suicidal", 4: "Stress"}
