@@ -1,4 +1,5 @@
 import os
+import json
 from typing import Dict, Tuple
 from google import genai
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForSequenceClassification
@@ -138,7 +139,7 @@ class CrisisDetector:
         - Message content always overrides diagnosis probabilities.
 
         10. **Output Formatting**
-        - Output **only valid Dictionary** with:
+        - Output **only valid JSON** with:
             {{
             "crisis_name": "<Anxiety|Normal|Depression|Suicidal|Stress>",
             "crisis_note": "<one-sentence explanation>",
@@ -154,7 +155,7 @@ class CrisisDetector:
         Rules:
         - Always double-check for plan, intent, means, or timeframe.
         - Be conservative — if in doubt, choose the higher severity.
-        - Do not include any commentary outside the Dictionary.
+        - Do not include any commentary outside the JSON.
 
         Begin analysis now.
         """
@@ -165,9 +166,28 @@ class CrisisDetector:
             )
         except Exception as e:
             print(f"[WARN] Failed to generate response: {e}")
-            return "I'm sorry, I'm having trouble generating a response. Please try again later."
+            return {"crisis_name": "unknown", "crisis_note": "llm_error", "severity": "low"}
 
-        return response.text
+        raw_text = (response.text or "").strip()
+
+        # Robust JSON extraction: take content between the first '{' and last '}'
+        try:
+            start = raw_text.find('{')
+            end = raw_text.rfind('}')
+            if start != -1 and end != -1 and end > start:
+                json_text = raw_text[start:end+1]
+            else:
+                json_text = raw_text
+
+            parsed = json.loads(json_text)
+            # Ensure expected keys exist; provide defaults
+            crisis_name = parsed.get("crisis_name", "unknown")
+            crisis_note = parsed.get("crisis_note", "")
+            severity = parsed.get("severity", "low")
+            return {"crisis_name": crisis_name, "crisis_note": crisis_note, "severity": severity}
+        except Exception:
+            # Fallback to a safe value to avoid crashing callers
+            return {"crisis_name": "unknown", "crisis_note": "parse_error", "severity": "low"}
 
     def detect_crisis(self, text: str) -> Dict[str, str]:
 
@@ -176,4 +196,5 @@ class CrisisDetector:
 
         result = self.severity_rating_agent(text, all_probs)
 
+        # Already returns a dict
         return result

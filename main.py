@@ -244,10 +244,8 @@ def process_crisis_detection(connection, account_id):
             f"Processing {len(messages)} messages as newline-joined context"
         )
 
-        # Process context through crisis detection
-        crisis_result = crisis_detector.detect_crisis(child_history_context)
-
-        crisis_dict = json.loads(crisis_result)
+        # Process context through crisis detection (already returns a dict)
+        crisis_dict = crisis_detector.detect_crisis(child_history_context)
         logger.info(f"Crisis detection result: {crisis_dict}")
         
         # Get or create crisis_id
@@ -273,7 +271,7 @@ def process_crisis_detection(connection, account_id):
             "status": "success",
             "messages_processed": len(messages),
             "alerts_created": 1,
-            "crisis_result": crisis_result,
+            "crisis_result": crisis_dict,
             "alert_id": alert_result.get('affected_rows', 'unknown')
         }
         
