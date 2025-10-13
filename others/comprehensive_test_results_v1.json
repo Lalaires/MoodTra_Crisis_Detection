@@ -1,0 +1,861 @@
+{
+  "timestamp": "2025-10-03T02:24:16.116740",
+  "detailed_results": {
+    "Normal": {
+      "low": [
+        {
+          "example": "I had a great day at school today! Math class was fun.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "Just finished my homework. Now I'm going to play some video games.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "Can't wait for the weekend! Going to the beach with my family.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": true
+        }
+      ],
+      "medium": [
+        {
+          "example": "School is okay I guess. Nothing special happening.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "Sometimes I feel bored but it's fine.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "Life is just meh right now, not bad though.",
+          "target_severity": "medium",
+          "detected_category": "Suicidal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        }
+      ],
+      "high": [
+        {
+          "example": "I feel neutral about everything. Nothing really matters much.",
+          "target_severity": "high",
+          "detected_category": "Depression",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "Just going through the motions every day.",
+          "target_severity": "high",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "Everything feels flat and colorless but I'm managing.",
+          "target_severity": "high",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        }
+      ],
+      "extremely_high": [
+        {
+          "example": "I don't feel anything anymore, just empty numbness.",
+          "target_severity": "extremely_high",
+          "detected_category": "Depression",
+          "detected_severity": "medium",
+          "crisis_note": "depression. Reasoning: The post mentions feeling empty numbness and a lack of emotions, which are common symptoms associated with depression. Additionally, the use of the phrase I don't feel anything anymore suggests a loss of interest or pleasure in activities, which can also be indicative of depression.",
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "Complete emotional flatness, like I'm just existing.",
+          "target_severity": "extremely_high",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "Numb to everything around me, total emotional void.",
+          "target_severity": "extremely_high",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        }
+      ]
+    },
+    "Anxiety": {
+      "low": [
+        {
+          "example": "I'm a little nervous about the test tomorrow but I'll be fine.",
+          "target_severity": "low",
+          "detected_category": "Anxiety",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "Sometimes I worry about things but it passes quickly.",
+          "target_severity": "low",
+          "detected_category": "Anxiety",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "Feeling a bit anxious about the presentation but I can handle it.",
+          "target_severity": "low",
+          "detected_category": "Anxiety",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": true
+        }
+      ],
+      "medium": [
+        {
+          "example": "I keep worrying about my grades and what people think of me.",
+          "target_severity": "medium",
+          "detected_category": "Anxiety",
+          "detected_severity": "medium",
+          "crisis_note": "depression. Reasoning: The post mentions worrying about grades and what people think of them, which are common symptoms associated with depression. Additionally, the use of the phrase analyze the following teen's chat message and provide a possible mental health condition and reasoning suggests that the person may be struggling with their mental health.",
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "My heart races sometimes when I think about school stuff.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "Can't stop thinking about all the things that could go wrong.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        }
+      ],
+      "high": [
+        {
+          "example": "I can't sleep because my mind won't stop racing with worries.",
+          "target_severity": "high",
+          "detected_category": "Anxiety",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "My chest feels tight all the time and I'm constantly on edge.",
+          "target_severity": "high",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "I'm having panic attacks almost every day now. Can't breathe properly.",
+          "target_severity": "high",
+          "detected_category": "Anxiety",
+          "detected_severity": "medium",
+          "crisis_note": "anxiety. Reasoning: The post mentions experiencing panic attacks almost every day and difficulty breathing, which are symptoms commonly associated with anxiety disorders. The mention of panic attacks suggests that the individual may be struggling with anxiety.",
+          "category_match": true,
+          "severity_match": false
+        }
+      ],
+      "extremely_high": [
+        {
+          "example": "I'm completely paralyzed by fear, can't leave my room anymore.",
+          "target_severity": "extremely_high",
+          "detected_category": "Anxiety",
+          "detected_severity": "medium",
+          "crisis_note": "depression. Reasoning: The post mentions feeling paralyzed by fear and being unable to leave the room. These are common symptoms associated with depression, such as feelings of hopelessness, social withdrawal, and a loss of interest or pleasure in activities.",
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "Constant panic attacks, heart pounding so hard I think I'm dying.",
+          "target_severity": "extremely_high",
+          "detected_category": "Anxiety",
+          "detected_severity": "medium",
+          "crisis_note": "anxiety. Reasoning: The post mentions experiencing constant panic attacks and a pounding heart, which are symptoms commonly associated with anxiety disorders. The use of the phrase I think I'm dying suggests a high level of distress and fear, which further supports the possibility of an anxiety disorder.",
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "Overwhelming terror that never stops, I'm trapped in endless anxiety.",
+          "target_severity": "extremely_high",
+          "detected_category": "Anxiety",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        }
+      ]
+    },
+    "Depression": {
+      "low": [
+        {
+          "example": "I've been feeling a bit down lately but it's not too bad.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": true
+        },
+        {
+          "example": "Some days I feel sad but I still get things done.",
+          "target_severity": "low",
+          "detected_category": "Depression",
+          "detected_severity": "high",
+          "crisis_note": "depression. Reasoning: The post mentions feeling sad on some days but still being able to get things done. This suggests that the individual may be experiencing fluctuations in mood and energy levels, which are common symptoms of depression. Additionally, the use of the phrase some days I feel sad implies that the person may be struggling with their mental health on a regular basis.",
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "Feeling a little blue today but I'll probably feel better tomorrow.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": true
+        }
+      ],
+      "medium": [
+        {
+          "example": "I don't enjoy things I used to like anymore. Everything feels hard.",
+          "target_severity": "medium",
+          "detected_category": "Depression",
+          "detected_severity": "high",
+          "crisis_note": "depression. Reasoning: The post mentions a lack of enjoyment in things the person used to like and describes everything as hard. These statements suggest a possible loss of interest or pleasure in activities, which are common symptoms associated with depression.",
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "I've been sleeping too much and don't want to get out of bed.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "I feel really sad most days and it's hard to concentrate.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        }
+      ],
+      "high": [
+        {
+          "example": "I can't find any reason to get up in the morning. Everything is hopeless.",
+          "target_severity": "high",
+          "detected_category": "Depression",
+          "detected_severity": "high",
+          "crisis_note": "depression. Reasoning: The post includes statements suggesting a lack of motivation, hopelessness, and a negative outlook on life. These are common symptoms associated with depression, such as a loss of interest or pleasure in activities and feelings of despair.",
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "I feel completely worthless and like a burden to everyone around me.",
+          "target_severity": "high",
+          "detected_category": "Depression",
+          "detected_severity": "high",
+          "crisis_note": "depression. Reasoning: The post includes statements suggesting a low self-esteem, feelings of worthlessness, and being a burden to others. These are common symptoms associated with depression, such as negative self-perception and a sense of hopelessness.",
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "The sadness is crushing me. I can barely function anymore.",
+          "target_severity": "high",
+          "detected_category": "Depression",
+          "detected_severity": "high",
+          "crisis_note": "depression. Reasoning: The post mentions feeling overwhelmed by sadness and being unable to function, which are common symptoms associated with depression. The use of the phrase crushing me further emphasizes the emotional distress and the impact it is having on the individual's mental well-being.",
+          "category_match": true,
+          "severity_match": true
+        }
+      ],
+      "extremely_high": [
+        {
+          "example": "I see no point in continuing. The pain is unbearable and endless.",
+          "target_severity": "extremely_high",
+          "detected_category": "Suicidal",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide or self-harm tendency. Reasoning: The use of the phrase 'I see no point in continuing' indicates that the person is expressing feelings of hopelessness and despair. The mention of the pain being unbearable and endless suggests that they may be experiencing intense emotional distress. This combination of negative emotions and the mention of suicide indicates a tendency towards self-harming or suicidal thoughts.",
+          "category_match": false,
+          "severity_match": true
+        },
+        {
+          "example": "Complete despair, no light at the end of the tunnel, just darkness.",
+          "target_severity": "extremely_high",
+          "detected_category": "Suicidal",
+          "detected_severity": "high",
+          "crisis_note": "depression. Reasoning: The post mentions feelings of despair, hopelessness, and darkness, which are common symptoms associated with depression. Additionally, the use of the phrase no light at the end of the tunnel suggests a lack of hope or motivation, which can also be indicative of depression.",
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "I'm drowning in hopelessness. Nothing will ever get better.",
+          "target_severity": "extremely_high",
+          "detected_category": "Depression",
+          "detected_severity": "high",
+          "crisis_note": "depression. Reasoning: The post includes statements suggesting a deep sense of hopelessness and a belief that nothing will ever get better. These are common symptoms associated with depression, such as feelings of despair and a lack of hope for the future.",
+          "category_match": true,
+          "severity_match": false
+        }
+      ]
+    },
+    "Stress": {
+      "low": [
+        {
+          "example": "I have a lot of homework this week but I'll manage.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": true
+        },
+        {
+          "example": "Things are a bit busy but nothing I can't handle.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": true
+        },
+        {
+          "example": "Feeling a little stressed about the upcoming deadline.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": true
+        }
+      ],
+      "medium": [
+        {
+          "example": "I'm overwhelmed with all the tests and assignments piling up.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "So much pressure from school and parents, I'm exhausted.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "I can't keep up with everything. It's all too much right now.",
+          "target_severity": "medium",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        }
+      ],
+      "high": [
+        {
+          "example": "I'm breaking down from all the pressure. Can't cope anymore.",
+          "target_severity": "high",
+          "detected_category": "Depression",
+          "detected_severity": "medium",
+          "crisis_note": "depression. Reasoning: The post mentions breaking down from pressure and not being able to cope anymore, which are common symptoms associated with depression. Additionally, the use of the phrase can't cope anymore suggests a sense of hopelessness and despair, further supporting the possibility of depression.",
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "Everything is crashing down on me. I'm at my breaking point.",
+          "target_severity": "high",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "The stress is making me physically sick. I can't handle this.",
+          "target_severity": "high",
+          "detected_category": "Stress",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": true,
+          "severity_match": false
+        }
+      ],
+      "extremely_high": [
+        {
+          "example": "I'm completely overwhelmed, on the verge of total breakdown.",
+          "target_severity": "extremely_high",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "The pressure is crushing me, I feel like I'm going to explode.",
+          "target_severity": "extremely_high",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "I can't take it anymore, the stress is destroying me completely.",
+          "target_severity": "extremely_high",
+          "detected_category": "Stress",
+          "detected_severity": "high",
+          "crisis_note": "suicide. Reasoning: The use of the phrase I can't take it anymore and the phrase the stress is destroying me completely suggests that the person is experiencing intense emotional distress and may be at risk for suicidal thoughts or actions. Additionally, the mention of analyzing the chat message and providing a possible mental health condition and reasoning indicates that the individual may be struggling with thoughts of self-harm or suicide.",
+          "category_match": true,
+          "severity_match": false
+        }
+      ]
+    },
+    "Suicidal": {
+      "low": [
+        {
+          "example": "Sometimes I wonder what it would be like to not exist.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "medium",
+          "crisis_note": "suicide or self-harm tendency. Reasoning: The use of the phrase 'Sometimes I wonder what it would be like to not exist' suggests that the person is contemplating or contemplating suicide. This statement indicates a significant level of distress and suggests that they may be struggling with suicidal ideation.",
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "I've had passing thoughts that maybe things would be easier if I wasn't here.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": true
+        },
+        {
+          "example": "Occasionally I think about not being around but it's just a fleeting thought.",
+          "target_severity": "low",
+          "detected_category": "Normal",
+          "detected_severity": "low",
+          "crisis_note": null,
+          "category_match": false,
+          "severity_match": true
+        }
+      ],
+      "medium": [
+        {
+          "example": "I keep thinking about ending it all. The thoughts are getting stronger.",
+          "target_severity": "medium",
+          "detected_category": "Suicidal",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide or self-harm tendency. Reasoning: The use of the phrase 'I keep thinking about ending it all' indicates that the person is experiencing thoughts of suicide. The mention of the thoughts getting stronger suggests that they may be struggling with suicidal ideation. This is a clear indication of a potential mental health issue related to suicide or selfharm.",
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "I don't want to be alive anymore. I think about death often.",
+          "target_severity": "medium",
+          "detected_category": "Depression",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide or self-harm tendency. Reasoning: The use of the phrase I don't want to be alive anymore and the mention of thinking about death often strongly suggest that the person is struggling with suicidal thoughts or ideation. This indicates a potential mental health issue related to suicide. Additionally, the use of phrases like analyze the chat message and provide a possible mental health condition and reasoning further supports the assigned label.",
+          "category_match": false,
+          "severity_match": false
+        },
+        {
+          "example": "Life feels meaningless and I wish I could just disappear.",
+          "target_severity": "medium",
+          "detected_category": "Suicidal",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide or self-harm tendency. Reasoning: The use of phrases like life feels meaningless and I wish I could just disappear indicate a sense of hopelessness and a desire to escape from life, which are common indicators of suicidal ideation. Additionally, the mention of a possible mental health condition and reasoning suggests that the person may be struggling with their mental health.",
+          "category_match": true,
+          "severity_match": false
+        }
+      ],
+      "high": [
+        {
+          "example": "I've been researching ways to end my life. I have a plan.",
+          "target_severity": "high",
+          "detected_category": "Suicidal",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide. Reasoning: The post explicitly mentions researching ways to end one's life and having a plan. This indicates that the person is struggling with suicidal ideation and may be at risk for self-harm or suicide.",
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "I want to kill myself. I've thought about how I would do it.",
+          "target_severity": "high",
+          "detected_category": "Suicidal",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide or self-harm tendency. Reasoning: The use of the phrase 'I want to kill myself' clearly indicates that the person is experiencing suicidal thoughts or ideation. The mention of thinking about how they would do it further suggests a high level of distress and a potential risk for self-harming behavior. This post raises concerns about the person's mental well-being and warrants immediate attention and intervention.",
+          "category_match": true,
+          "severity_match": false
+        },
+        {
+          "example": "I'm planning to end my life soon. I can't see any other way out.",
+          "target_severity": "high",
+          "detected_category": "Suicidal",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide or self-harm tendency. Reasoning: The use of the phrase 'I'm planning to end my life soon' clearly indicates that the person is experiencing suicidal thoughts or intentions. Additionally, the mention of not seeing any other way out suggests a sense of hopelessness and despair, which are common symptoms associated with suicidal ideation. Therefore, the assigned label for this post is suicide/self-harm tendencies.",
+          "category_match": true,
+          "severity_match": false
+        }
+      ],
+      "extremely_high": [
+        {
+          "example": "I'm going to kill myself tonight. I have everything ready.",
+          "target_severity": "extremely_high",
+          "detected_category": "Suicidal",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide or self-harm tendency. Reasoning: The explicit statement of I'm going to kill myself tonight clearly indicates that the person is experiencing suicidal ideation or has at least thought about it. The use of the phrase I have everything ready further emphasizes the seriousness of the situation and the need for immediate intervention and support.",
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "This is my goodbye. I'm ending my life and I've made my decision.",
+          "target_severity": "extremely_high",
+          "detected_category": "Suicidal",
+          "detected_severity": "extremely_high",
+          "crisis_note": "suicide. Reasoning: The post explicitly states that the person is ending their life and has made their decision. This strongly suggests that they are struggling with suicidal ideation and may be at risk for self-harm.",
+          "category_match": true,
+          "severity_match": true
+        },
+        {
+          "example": "I have the pills in my hand. I'm about to take them all right now.",
+          "target_severity": "extremely_high",
+          "detected_category": "Normal",
+          "detected_severity": "medium",
+          "crisis_note": "suicide. Reasoning: The post explicitly mentions having the pills in their hand and being about to take them, indicating that the person is contemplating suicide.",
+          "category_match": false,
+          "severity_match": false
+        }
+      ]
+    }
+  },
+  "analysis": {
+    "summary": {
+      "total_tests": 60,
+      "category_accuracy": 55.0,
+      "severity_accuracy": 33.33,
+      "both_correct": 20.0
+    },
+    "category_accuracy": {
+      "Normal": {
+        "correct": 9,
+        "total": 12,
+        "percentage": 75.0
+      },
+      "Anxiety": {
+        "correct": 9,
+        "total": 12,
+        "percentage": 75.0
+      },
+      "Depression": {
+        "correct": 6,
+        "total": 12,
+        "percentage": 50.0
+      },
+      "Stress": {
+        "correct": 2,
+        "total": 12,
+        "percentage": 16.67
+      },
+      "Suicidal": {
+        "correct": 7,
+        "total": 12,
+        "percentage": 58.33
+      }
+    },
+    "severity_accuracy": {},
+    "definitions": {}
+  },
+  "definitions": {
+    "Normal": {
+      "low": {
+        "definition": "Positive emotional state with no concerning symptoms. Individual expresses contentment, engagement in activities, and healthy social functioning.",
+        "tested_examples": [
+          "I had a great day at school today! Math class was fun.",
+          "Just finished my homework. Now I'm going to play some video games.",
+          "Can't wait for the weekend! Going to the beach with my family."
+        ],
+        "successfully_detected": [
+          "I had a great day at school today! Math class was fun.",
+          "Just finished my homework. Now I'm going to play some video games.",
+          "Can't wait for the weekend! Going to the beach with my family."
+        ],
+        "accuracy": "3/3"
+      },
+      "medium": {
+        "definition": "Neutral emotional state with mild disengagement. May express boredom or lack of excitement but no distress or dysfunction.",
+        "tested_examples": [
+          "School is okay I guess. Nothing special happening.",
+          "Sometimes I feel bored but it's fine.",
+          "Life is just meh right now, not bad though."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "high": {
+        "definition": "Emotional detachment with concerning apathy. Individual experiences significant lack of emotional response while maintaining basic functioning.",
+        "tested_examples": [
+          "I feel neutral about everything. Nothing really matters much.",
+          "Just going through the motions every day.",
+          "Everything feels flat and colorless but I'm managing."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "extremely_high": {
+        "definition": "Severe emotional numbness and dissociation. Complete absence of emotional response indicating possible depersonalization or severe detachment.",
+        "tested_examples": [
+          "I don't feel anything anymore, just empty numbness.",
+          "Complete emotional flatness, like I'm just existing.",
+          "Numb to everything around me, total emotional void."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      }
+    },
+    "Anxiety": {
+      "low": {
+        "definition": "Mild worry or nervousness about specific situations. Concerns are manageable and don't significantly impair daily functioning.",
+        "tested_examples": [
+          "I'm a little nervous about the test tomorrow but I'll be fine.",
+          "Sometimes I worry about things but it passes quickly.",
+          "Feeling a bit anxious about the presentation but I can handle it."
+        ],
+        "successfully_detected": [
+          "I'm a little nervous about the test tomorrow but I'll be fine.",
+          "Sometimes I worry about things but it passes quickly.",
+          "Feeling a bit anxious about the presentation but I can handle it."
+        ],
+        "accuracy": "3/3"
+      },
+      "medium": {
+        "definition": "Persistent worry with physical symptoms. Individual experiences frequent anxious thoughts, increased heart rate, and difficulty controlling worry.",
+        "tested_examples": [
+          "I keep worrying about my grades and what people think of me.",
+          "My heart races sometimes when I think about school stuff.",
+          "Can't stop thinking about all the things that could go wrong."
+        ],
+        "successfully_detected": [
+          "I keep worrying about my grades and what people think of me."
+        ],
+        "accuracy": "1/3"
+      },
+      "high": {
+        "definition": "Severe anxiety with panic symptoms. Individual experiences panic attacks, sleep disruption, chest tightness, and significant functional impairment.",
+        "tested_examples": [
+          "I can't sleep because my mind won't stop racing with worries.",
+          "My chest feels tight all the time and I'm constantly on edge.",
+          "I'm having panic attacks almost every day now. Can't breathe properly."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "extremely_high": {
+        "definition": "Debilitating panic and terror. Individual is paralyzed by fear, experiencing constant severe panic attacks, and unable to perform basic activities.",
+        "tested_examples": [
+          "I'm completely paralyzed by fear, can't leave my room anymore.",
+          "Constant panic attacks, heart pounding so hard I think I'm dying.",
+          "Overwhelming terror that never stops, I'm trapped in endless anxiety."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      }
+    },
+    "Depression": {
+      "low": {
+        "definition": "Mild sadness or low mood. Individual feels down occasionally but maintains daily activities and expects improvement.",
+        "tested_examples": [
+          "I've been feeling a bit down lately but it's not too bad.",
+          "Some days I feel sad but I still get things done.",
+          "Feeling a little blue today but I'll probably feel better tomorrow."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "medium": {
+        "definition": "Persistent depressive symptoms with anhedonia. Individual has lost interest in activities, experiences sleep changes, difficulty concentrating, and pervasive sadness.",
+        "tested_examples": [
+          "I don't enjoy things I used to like anymore. Everything feels hard.",
+          "I've been sleeping too much and don't want to get out of bed.",
+          "I feel really sad most days and it's hard to concentrate."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "high": {
+        "definition": "Severe depression with hopelessness. Individual feels worthless, sees no purpose in daily activities, experiences crushing sadness, and significant functional impairment.",
+        "tested_examples": [
+          "I can't find any reason to get up in the morning. Everything is hopeless.",
+          "I feel completely worthless and like a burden to everyone around me.",
+          "The sadness is crushing me. I can barely function anymore."
+        ],
+        "successfully_detected": [
+          "I can't find any reason to get up in the morning. Everything is hopeless.",
+          "I feel completely worthless and like a burden to everyone around me.",
+          "The sadness is crushing me. I can barely function anymore."
+        ],
+        "accuracy": "3/3"
+      },
+      "extremely_high": {
+        "definition": "Profound despair with complete hopelessness. Individual experiences unbearable emotional pain, sees no possibility of improvement, and is in severe distress.",
+        "tested_examples": [
+          "I see no point in continuing. The pain is unbearable and endless.",
+          "Complete despair, no light at the end of the tunnel, just darkness.",
+          "I'm drowning in hopelessness. Nothing will ever get better."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      }
+    },
+    "Stress": {
+      "low": {
+        "definition": "Manageable pressure from daily demands. Individual acknowledges stress but feels capable of handling current responsibilities.",
+        "tested_examples": [
+          "I have a lot of homework this week but I'll manage.",
+          "Things are a bit busy but nothing I can't handle.",
+          "Feeling a little stressed about the upcoming deadline."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "medium": {
+        "definition": "Overwhelming demands with exhaustion. Individual struggles to keep up with responsibilities, feels pressured from multiple sources, and experiences fatigue.",
+        "tested_examples": [
+          "I'm overwhelmed with all the tests and assignments piling up.",
+          "So much pressure from school and parents, I'm exhausted.",
+          "I can't keep up with everything. It's all too much right now."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "high": {
+        "definition": "Extreme pressure causing breakdown. Individual is at breaking point, experiencing physical symptoms from stress, and unable to cope effectively.",
+        "tested_examples": [
+          "I'm breaking down from all the pressure. Can't cope anymore.",
+          "Everything is crashing down on me. I'm at my breaking point.",
+          "The stress is making me physically sick. I can't handle this."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "extremely_high": {
+        "definition": "Critical stress overload with imminent collapse. Individual is completely overwhelmed, on verge of total breakdown, and experiencing crisis-level pressure.",
+        "tested_examples": [
+          "I'm completely overwhelmed, on the verge of total breakdown.",
+          "The pressure is crushing me, I feel like I'm going to explode.",
+          "I can't take it anymore, the stress is destroying me completely."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      }
+    },
+    "Suicidal": {
+      "low": {
+        "definition": "Passive suicidal ideation without intent. Individual has fleeting thoughts about non-existence but no plans or strong desire to act.",
+        "tested_examples": [
+          "Sometimes I wonder what it would be like to not exist.",
+          "I've had passing thoughts that maybe things would be easier if I wasn't here.",
+          "Occasionally I think about not being around but it's just a fleeting thought."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "medium": {
+        "definition": "Active suicidal thoughts with increasing frequency. Individual frequently thinks about death, expresses wish to die, but hasn't formulated concrete plans.",
+        "tested_examples": [
+          "I keep thinking about ending it all. The thoughts are getting stronger.",
+          "I don't want to be alive anymore. I think about death often.",
+          "Life feels meaningless and I wish I could just disappear."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "high": {
+        "definition": "Suicidal intent with planning. Individual has developed methods for suicide, is actively planning, and expresses clear intention to end their life.",
+        "tested_examples": [
+          "I've been researching ways to end my life. I have a plan.",
+          "I want to kill myself. I've thought about how I would do it.",
+          "I'm planning to end my life soon. I can't see any other way out."
+        ],
+        "successfully_detected": [],
+        "accuracy": "0/3"
+      },
+      "extremely_high": {
+        "definition": "Immediate suicide risk with imminent action. Individual has decided to attempt suicide, has means available, and is communicating final intentions. REQUIRES IMMEDIATE INTERVENTION.",
+        "tested_examples": [
+          "I'm going to kill myself tonight. I have everything ready.",
+          "This is my goodbye. I'm ending my life and I've made my decision.",
+          "I have the pills in my hand. I'm about to take them all right now."
+        ],
+        "successfully_detected": [
+          "I'm going to kill myself tonight. I have everything ready.",
+          "This is my goodbye. I'm ending my life and I've made my decision."
+        ],
+        "accuracy": "2/3"
+      }
+    }
+  }
+}

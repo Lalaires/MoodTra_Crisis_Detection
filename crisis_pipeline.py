@@ -21,17 +21,17 @@ class CrisisDetector:
         self.label_mapping = {0: "Anxiety", 1: "Normal", 2: "Depression", 3: "Suicidal", 4: "Stress"}
         self.severity_scores = {
             "normal": 0.0,
-            "stress": 0.8,
-            "anxiety": 0.9,
-            "depression": 0.9,
+            "stress": 0.6,
+            "anxiety": 0.7,
+            "depression": 0.8,
             "suicidal": 1.0
         }
         self.condition_scaling = {
             "normal": 0.3,           
             "no mental disorders": 0.3,
-            "stress": 0.8,  
-            "anxiety": 0.9,
-            "depression": 0.9,       
+            "stress": 0.7,  
+            "anxiety": 0.75,
+            "depression": 0.8,       
             "suicidal": 1.0,        
             "suicide": 1.0,
             "self-harm": 1.0,
@@ -39,9 +39,9 @@ class CrisisDetector:
         }
         # Pre-compute severity level thresholds
         self.severity_thresholds = [
-            (0.89, "extremely_high"),
-            (0.79, "high"),
-            (0.59, "medium"),
+            (0.79, "extremely_high"),
+            (0.59, "high"),
+            (0.39, "medium"),
             (0.0, "low")
         ]
 
@@ -129,7 +129,7 @@ class CrisisDetector:
         all_probs, top_prediction = self.crisis_diagnosis(text)
 
         score = self.severity_score(all_probs)
-        if score >= 0.6:
+        if score >= 0.39:
             # Get detailed analysis
             condition, completion = self.crisis_analysis(text)
             severity = self.severity_scaling(score, condition)

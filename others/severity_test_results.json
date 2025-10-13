@@ -1,0 +1,262 @@
+{
+  "matches": [
+    {
+      "example": "Had a great day with friends, feeling good!",
+      "intended_category": "Normal",
+      "intended_severity": "low",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": true
+    },
+    {
+      "example": "Just finished a fun workout, feeling energized!",
+      "intended_category": "Normal",
+      "intended_severity": "low",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": true
+    },
+    {
+      "example": "Sometimes I worry about tests but I can handle it.",
+      "intended_category": "Anxiety",
+      "intended_severity": "low",
+      "actual_category": "Anxiety",
+      "actual_severity": "low",
+      "match": true
+    },
+    {
+      "example": "The panic attacks are unbearable. I've thought maybe dying would stop this feeling.",
+      "intended_category": "Anxiety",
+      "intended_severity": "high",
+      "actual_category": "Anxiety",
+      "actual_severity": "high",
+      "match": true
+    },
+    {
+      "example": "I'm terrified all the time. Sometimes I think ending it would end the fear.",
+      "intended_category": "Anxiety",
+      "intended_severity": "high",
+      "actual_category": "Anxiety",
+      "actual_severity": "high",
+      "match": true
+    },
+    {
+      "example": "I'm going to end it tonight. I have everything ready and no one can stop me.",
+      "intended_category": "Depression",
+      "intended_severity": "extremely_high",
+      "actual_category": "Depression",
+      "actual_severity": "extremely_high",
+      "match": true
+    }
+  ],
+  "mismatches": [
+    {
+      "example": "Exam tomorrow and I'm a bit nervous, but I'll be fine.",
+      "intended_category": "Stress",
+      "intended_severity": "low",
+      "actual_category": "Anxiety",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "Work is busy this week but I'm managing.",
+      "intended_category": "Stress",
+      "intended_severity": "low",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "Everything is overwhelming\u2014school, family, friends. I can't keep up and I'm exhausted.",
+      "intended_category": "Stress",
+      "intended_severity": "medium",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "I have so many deadlines and I feel like I'm drowning in responsibilities.",
+      "intended_category": "Stress",
+      "intended_severity": "medium",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "I feel like I'm drowning. Sometimes I think everyone would be better off without me.",
+      "intended_category": "Stress",
+      "intended_severity": "high",
+      "actual_category": "Suicidal",
+      "actual_severity": "high",
+      "match": false
+    },
+    {
+      "example": "The pressure is unbearable. I've thought about just giving up on everything.",
+      "intended_category": "Stress",
+      "intended_severity": "high",
+      "actual_category": "Suicidal",
+      "actual_severity": "medium",
+      "match": false
+    },
+    {
+      "example": "I can't take this anymore. I've thought about ways to end it and I'm ready.",
+      "intended_category": "Stress",
+      "intended_severity": "extremely_high",
+      "actual_category": "Depression",
+      "actual_severity": "extremely_high",
+      "match": false
+    },
+    {
+      "example": "This stress will kill me. I have pills and I'm considering taking them all.",
+      "intended_category": "Stress",
+      "intended_severity": "extremely_high",
+      "actual_category": "Stress",
+      "actual_severity": "high",
+      "match": false
+    },
+    {
+      "example": "I get anxious before presentations, but I manage okay.",
+      "intended_category": "Anxiety",
+      "intended_severity": "low",
+      "actual_category": "Anxiety",
+      "actual_severity": "high",
+      "match": false
+    },
+    {
+      "example": "I can't stop worrying about everything. My heart races constantly and I can't sleep.",
+      "intended_category": "Anxiety",
+      "intended_severity": "medium",
+      "actual_category": "Anxiety",
+      "actual_severity": "high",
+      "match": false
+    },
+    {
+      "example": "The anxiety is taking over my life. I can't focus on anything.",
+      "intended_category": "Anxiety",
+      "intended_severity": "medium",
+      "actual_category": "Anxiety",
+      "actual_severity": "high",
+      "match": false
+    },
+    {
+      "example": "I can't breathe, I'm trapped. I have pills ready to make it all stop tonight.",
+      "intended_category": "Anxiety",
+      "intended_severity": "extremely_high",
+      "actual_category": "Suicidal",
+      "actual_severity": "medium",
+      "match": false
+    },
+    {
+      "example": "The panic won't stop. I'm going to hurt myself to make it end.",
+      "intended_category": "Anxiety",
+      "intended_severity": "extremely_high",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "I've been feeling down for a few days, but I'm still going to school.",
+      "intended_category": "Depression",
+      "intended_severity": "low",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "Things seem a bit gray lately but I'm getting by.",
+      "intended_category": "Depression",
+      "intended_severity": "low",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "Nothing feels worth it anymore. Sometimes I wish I wouldn't wake up, but I'm not planning anything.",
+      "intended_category": "Depression",
+      "intended_severity": "medium",
+      "actual_category": "Depression",
+      "actual_severity": "high",
+      "match": false
+    },
+    {
+      "example": "I have no energy or motivation. Life feels pointless but I'm not going to hurt myself.",
+      "intended_category": "Depression",
+      "intended_severity": "medium",
+      "actual_category": "Depression",
+      "actual_severity": "high",
+      "match": false
+    },
+    {
+      "example": "I've been researching methods and thinking about it constantly. I don't have a set plan yet.",
+      "intended_category": "Depression",
+      "intended_severity": "high",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "Everything is hopeless. I've thought about ending it and looked up ways to do it.",
+      "intended_category": "Depression",
+      "intended_severity": "high",
+      "actual_category": "Suicidal",
+      "actual_severity": "extremely_high",
+      "match": false
+    },
+    {
+      "example": "I've written goodbye notes and I'm ready to kill myself today.",
+      "intended_category": "Depression",
+      "intended_severity": "extremely_high",
+      "actual_category": "Suicidal",
+      "actual_severity": "extremely_high",
+      "match": false
+    },
+    {
+      "example": "I think about dying a lot, but I don't know how or when.",
+      "intended_category": "Suicidal",
+      "intended_severity": "medium",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "Sometimes I want to die but I haven't made any plans.",
+      "intended_category": "Suicidal",
+      "intended_severity": "medium",
+      "actual_category": "Suicidal",
+      "actual_severity": "high",
+      "match": false
+    },
+    {
+      "example": "I've picked a method and written notes, but I haven't decided when.",
+      "intended_category": "Suicidal",
+      "intended_severity": "high",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "I know how I would kill myself. I've been planning it.",
+      "intended_category": "Suicidal",
+      "intended_severity": "high",
+      "actual_category": "Suicidal",
+      "actual_severity": "extremely_high",
+      "match": false
+    },
+    {
+      "example": "I'm going to jump tonight. I've picked the place and I'm done.",
+      "intended_category": "Suicidal",
+      "intended_severity": "extremely_high",
+      "actual_category": "Normal",
+      "actual_severity": "low",
+      "match": false
+    },
+    {
+      "example": "I'm going to hang myself. I have the rope and I'm alone.",
+      "intended_category": "Suicidal",
+      "intended_severity": "extremely_high",
+      "actual_category": "Suicidal",
+      "actual_severity": "medium",
+      "match": false
+    }
+  ]
+}

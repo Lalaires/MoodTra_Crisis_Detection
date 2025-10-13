@@ -1,0 +1,190 @@
+{
+  "improvements": [
+    {
+      "case": "Significant anxiety without SI should be MEDIUM not HIGH",
+      "category": "False Positive",
+      "expected": [
+        "Anxiety",
+        "medium"
+      ],
+      "original": [
+        "Anxiety",
+        "high"
+      ],
+      "tuned": [
+        "Anxiety",
+        "medium"
+      ],
+      "original_match": false,
+      "tuned_match": true
+    },
+    {
+      "case": "Severe anxiety alone should be MEDIUM not HIGH",
+      "category": "False Positive",
+      "expected": [
+        "Anxiety",
+        "medium"
+      ],
+      "original": [
+        "Anxiety",
+        "high"
+      ],
+      "tuned": [
+        "Anxiety",
+        "medium"
+      ],
+      "original_match": false,
+      "tuned_match": true
+    }
+  ],
+  "regressions": [
+    {
+      "case": "Mixed depression/suicidal signals should be HIGH",
+      "category": "Compound Risk",
+      "expected": [
+        "Suicidal",
+        "high"
+      ],
+      "original": [
+        "Suicidal",
+        "high"
+      ],
+      "tuned": [
+        "Suicidal",
+        "extremely_high"
+      ],
+      "original_match": true,
+      "tuned_match": false
+    }
+  ],
+  "unchanged_correct": [
+    {
+      "case": "Anxiety with death ideation should stay HIGH",
+      "category": "True Positive",
+      "expected": [
+        "Anxiety",
+        "high"
+      ],
+      "original": [
+        "Anxiety",
+        "high"
+      ],
+      "tuned": [
+        "Anxiety",
+        "high"
+      ],
+      "original_match": true,
+      "tuned_match": true
+    },
+    {
+      "case": "Fear with suicidal thoughts should stay HIGH",
+      "category": "True Positive",
+      "expected": [
+        "Anxiety",
+        "high"
+      ],
+      "original": [
+        "Anxiety",
+        "high"
+      ],
+      "tuned": [
+        "Anxiety",
+        "high"
+      ],
+      "original_match": true,
+      "tuned_match": true
+    },
+    {
+      "case": "Active plan with timeline should stay EXTREMELY_HIGH",
+      "category": "True Positive",
+      "expected": [
+        "Depression",
+        "extremely_high"
+      ],
+      "original": [
+        "Depression",
+        "extremely_high"
+      ],
+      "tuned": [
+        "Depression",
+        "extremely_high"
+      ],
+      "original_match": true,
+      "tuned_match": true
+    }
+  ],
+  "unchanged_incorrect": [
+    {
+      "case": "Managed anxiety should be LOW not HIGH",
+      "category": "False Positive",
+      "expected": [
+        "Anxiety",
+        "low"
+      ],
+      "original": [
+        "Anxiety",
+        "high"
+      ],
+      "tuned": [
+        "Anxiety",
+        "medium"
+      ],
+      "original_match": false,
+      "tuned_match": false
+    },
+    {
+      "case": "Passive ideation without plan should be MEDIUM",
+      "category": "Medium Range",
+      "expected": [
+        "Depression",
+        "medium"
+      ],
+      "original": [
+        "Depression",
+        "high"
+      ],
+      "tuned": [
+        "Depression",
+        "high"
+      ],
+      "original_match": false,
+      "tuned_match": false
+    },
+    {
+      "case": "Severe depression with protective factor should be MEDIUM",
+      "category": "Medium Range",
+      "expected": [
+        "Depression",
+        "medium"
+      ],
+      "original": [
+        "Depression",
+        "high"
+      ],
+      "tuned": [
+        "Depression",
+        "high"
+      ],
+      "original_match": false,
+      "tuned_match": false
+    },
+    {
+      "case": "Suicidal ideation without plan - test new scoring",
+      "category": "Compound Risk",
+      "expected": [
+        "Suicidal",
+        "medium"
+      ],
+      "original": [
+        "Suicidal",
+        "high"
+      ],
+      "tuned": [
+        "Suicidal",
+        "high"
+      ],
+      "original_match": false,
+      "tuned_match": false
+    }
+  ]
+}

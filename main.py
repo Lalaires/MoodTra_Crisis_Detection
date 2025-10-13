@@ -6,6 +6,8 @@ import logging
 from uuid import uuid4
 from datetime import datetime, timezone
 from crisis_pipeline import CrisisDetector
+import boto3
+from botocore.exceptions import ClientError
 
 # Configure logging
 logger = logging.getLogger()
@@ -13,6 +15,7 @@ logger.setLevel(logging.INFO)
 
 # Lazy-initialized singleton for CrisisDetector to avoid reloading models repeatedly
 _crisis_detector = None
+_ses_client = None
 
 def get_crisis_detector():
     global _crisis_detector
@@ -21,6 +24,13 @@ def get_crisis_detector():
         _crisis_detector = CrisisDetector()
         logger.info("CrisisDetector initialized.")
     return _crisis_detector
+
+def get_ses_client():
+    global _ses_client
+    if _ses_client is None:
+        region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION") or "ap-southeast-4"
+        _ses_client = boto3.client("ses", region_name=region)
+    return _ses_client
 
 def _normalize_to_utc(dt):
     """
@@ -80,6 +90,94 @@ def execute_query(connection, query, params=None):
     except Exception as e:
         logger.error(f"Error executing query: {e}")
         raise e
+
+def fetch_account_display_name(connection, account_id):
+    """
+    Fetch the human-friendly display name for an account.
+    """
+    try:
+        query = """
+        SELECT display_name
+        FROM account
+        WHERE account_id = %s
+        """
+        rows = execute_query(connection, query, (account_id,))
+        if rows:
+            return rows[0].get("display_name")
+        return None
+    except Exception as e:
+        logger.error(f"Error fetching account display name: {e}")
+        raise e
+
+def fetch_parent_emails(connection, child_account_id):
+    """
+    Return a list of parent email addresses linked to the given child account.
+
+    ERD mapping:
+    - guardian_child_link(parent_id, child_id, link_status)
+    - account(account_id, email, account_type, status)
+    """
+    try:
+        query = """
+        SELECT a.email
+        FROM guardian_child_link gcl
+        JOIN account a ON a.account_id = gcl.parent_id
+        WHERE gcl.child_id = %s
+          AND (gcl.link_status = 'linked' OR gcl.link_status IS NULL)
+          AND (a.status = 'active' OR a.status IS NULL)
+        """
+        rows = execute_query(connection, query, (child_account_id,))
+        emails = [r["email"] for r in rows if r.get("email")]
+        return emails
+    except Exception as e:
+        logger.error(f"Error fetching parent emails: {e}")
+        raise e
+
+def send_parent_email(parent_email, child_name):
+    """
+    Send an urgent email to a parent using Amazon SES.
+    Requires env var SES_FROM_ADDRESS to be set to a verified sender.
+    """
+    source = os.getenv("SES_FROM_ADDRESS")
+    if not source:
+        logger.warning("SES_FROM_ADDRESS not set; skipping email send")
+        return
+
+    subject = f"Urgent Alert from MoodTra: {child_name or 'Your child'} might be in a serious crisis"
+    text_body = (
+        f"Hello,\n\n"
+        f"Our system detected an extremely high severity event for {child_name or 'Your child'}.\n"
+        f"Please review more details on MoodTra and check in on them immediately."
+    )
+    html_body = f"""
+    <html>
+      <body>
+        <p>Hello,</p>
+        <p>Our system detected an <strong>EXTREMELY HIGH</strong> severity event for <strong>{child_name or 'Your child'}</strong>.</p>
+        <p>Please review more details on <a href="https://moodtra.tech">MoodTra</a> and check in on them immediately.</p>
+      </body>
+    </html>
+    """
+
+    try:
+        ses = get_ses_client()
+        ses.send_email(
+            Source=source,
+            Destination={"ToAddresses": [parent_email]},
+            Message={
+                "Subject": {"Data": subject, "Charset": "UTF-8"},
+                "Body": {
+                    "Text": {"Data": text_body, "Charset": "UTF-8"},
+                    "Html": {"Data": html_body, "Charset": "UTF-8"},
+                },
+            },
+            ReplyToAddresses=[source],
+        )
+        logger.info(f"SES email sent to {parent_email}")
+    except ClientError as e:
+        logger.error(f"SES send_email failed for {parent_email}: {e}")
+    except Exception as e:
+        logger.error(f"Unexpected error sending SES email to {parent_email}: {e}")
 
 def fetch_latest_child_messages(connection, account_id, limit=10):
     """
@@ -244,7 +342,7 @@ def process_crisis_detection(connection, account_id):
             f"Processing {len(messages)} messages as newline-joined context"
         )
 
-        # Process context through crisis detection
+        # Process context through csrisis detection
         crisis_result = crisis_detector.detect_crisis(child_history_context)
         
         logger.info(f"Crisis detection result: {crisis_result}")
@@ -267,6 +365,17 @@ def process_crisis_detection(connection, account_id):
         )
         
         logger.info(f"Crisis alert stored successfully: {alert_result}")
+        
+        # If severity is extremely_high, notify all linked parents via SES
+        if severity == "extremely_high":
+            try:
+                parent_emails = fetch_parent_emails(connection, account_id)
+                child_name = fetch_account_display_name(connection, account_id)
+                for email in parent_emails:
+                    send_parent_email(email, child_name)
+            except Exception as e:
+                # Do not fail the pipeline if email sending encounters issues
+                logger.error(f"Failed to send parent notifications: {e}")
         
         return {
             "status": "success",
