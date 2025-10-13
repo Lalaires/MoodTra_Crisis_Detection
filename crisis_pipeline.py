@@ -24,7 +24,7 @@ class CrisisDetector:
         self.diagnosis_model = AutoModelForSequenceClassification.from_pretrained("ethandavey/mental-health-diagnosis-bert")
         self.label_mapping = {0: "Anxiety", 1: "Normal", 2: "Depression", 3: "Suicidal", 4: "Stress"}
 
-    def crisis_diagnosis(self, text: str) -> Tuple[Dict[str, float], str]:
+    def crisis_diagnosis(self, text: str) -> Dict[str, float]:
 
         inputs = self.diagnosis_tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=128)
         
@@ -138,12 +138,12 @@ class CrisisDetector:
         - Message content always overrides diagnosis probabilities.
 
         10. **Output Formatting**
-        - Output **only valid JSON** with:
-            {{
+        - Output **only valid Dictionary** with:
+            {
             "crisis_name": "<Anxiety|Normal|Depression|Suicidal|Stress>",
             "crisis_note": "<one-sentence explanation>",
             "severity": "<low|medium|high|extremely high>"
-            }}
+            }
 
         ---
 
@@ -154,7 +154,7 @@ class CrisisDetector:
         Rules:
         - Always double-check for plan, intent, means, or timeframe.
         - Be conservative — if in doubt, choose the higher severity.
-        - Do not include any commentary outside the JSON.
+        - Do not include any commentary outside the Dictionary.
 
         Begin analysis now.
         """
