@@ -1,6 +1,6 @@
-## MindPal Crisis Detection Pipeline
+## MoodTra Crisis Detection Pipeline
 
-A lightweight pipeline that detects mental-health crisis signals from recent chat messages and raises database alerts. It combines a Hugging Face classifier for diagnosis probabilities with a Google GenAI model to assign a severity level.
+A end-to-end pipeline that detects mental-health crisis signals from recent chat messages and raises database alerts. It combines a Hugging Face classifier for diagnosis probabilities with a Google GenAI model to assign a severity level.
 
 ### How it works
 
