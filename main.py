@@ -81,42 +81,51 @@ def execute_query(connection, query, params=None):
         logger.error(f"Error executing query: {e}")
         raise e
 
-def fetch_latest_child_messages(connection, account_id, limit=10):
+def fetch_latest_child_messages(connection, account_id, limit=5):
     """
-    Fetch the latest child messages from the chat_message table for a specific account
+    Fetch the latest child messages from the newest session for a specific account
     Returns messages and the timestamp of the latest message
     """
     try:
         query = """
+        WITH newest_session AS (
+            SELECT cs.session_id
+            FROM chat_session cs
+            JOIN chat_message cm ON cs.session_id = cm.session_id
+            WHERE cs.account_id = %s AND cm.message_role = 'child'
+            ORDER BY cm.message_ts DESC
+            LIMIT 1
+        )
         SELECT cm.message_text, cm.message_ts
         FROM chat_message cm
-        JOIN chat_session cs ON cm.session_id = cs.session_id
-        WHERE cm.message_role = 'child' AND cs.account_id = %s
+        WHERE cm.session_id = (SELECT session_id FROM newest_session)
+          AND cm.message_role = 'child'
         ORDER BY cm.message_ts DESC 
         LIMIT %s
         """
         messages = execute_query(connection, query, (account_id, limit))
-        logger.info(f"Fetched {len(messages)} child messages for account {account_id}")
+        logger.info(f"Fetched {len(messages)} child messages from newest session for account {account_id}")
         return messages
     except Exception as e:
         logger.error(f"Error fetching child messages: {e}")
         raise e
 
-def get_all_account_ids(connection):
+def get_all_child_accounts(connection):
     """
-    Get all account IDs from the account table
+    Get all child accounts from the account table
     """
     try:
         query = """
-        SELECT account_id
+        SELECT account_id, account_type
         FROM account
+        WHERE account_type = 'child'
         ORDER BY account_id
         """
         accounts = execute_query(connection, query)
-        logger.info(f"Found {len(accounts)} accounts in database")
+        logger.info(f"Found {len(accounts)} child accounts in database")
         return [account['account_id'] for account in accounts]
     except Exception as e:
-        logger.error(f"Error fetching account IDs: {e}")
+        logger.error(f"Error fetching child accounts: {e}")
         raise e
 
 def get_crisis_id(connection, crisis_name):
@@ -287,7 +296,7 @@ def process_all_accounts(connection):
         logger.info("Starting crisis detection for all accounts")
 
         # Get all account IDs
-        account_ids = get_all_account_ids(connection)
+        account_ids = get_all_child_accounts(connection)
 
         if not account_ids:
             logger.info("No accounts found in database")
