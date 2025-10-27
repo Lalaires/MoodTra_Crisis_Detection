@@ -81,7 +81,7 @@ def execute_query(connection, query, params=None):
         logger.error(f"Error executing query: {e}")
         raise e
 
-def fetch_latest_child_messages(connection, account_id, limit=10):
+def fetch_latest_child_messages(connection, account_id, limit=5):
     """
     Fetch the latest child messages from the chat_message table for a specific account
     Returns messages and the timestamp of the latest message
@@ -97,26 +97,28 @@ def fetch_latest_child_messages(connection, account_id, limit=10):
         """
         messages = execute_query(connection, query, (account_id, limit))
         logger.info(f"Fetched {len(messages)} child messages for account {account_id}")
+        logger.info(f"Messages: {messages}")
         return messages
     except Exception as e:
         logger.error(f"Error fetching child messages: {e}")
         raise e
 
-def get_all_account_ids(connection):
+def get_all_child_account_ids(connection):
     """
-    Get all account IDs from the account table
+    Get all child account IDs from the account table
     """
     try:
         query = """
-        SELECT account_id
+        SELECT account_id, account_type
         FROM account
+        WHERE account_type = 'child'
         ORDER BY account_id
         """
         accounts = execute_query(connection, query)
-        logger.info(f"Found {len(accounts)} accounts in database")
+        logger.info(f"Found {len(accounts)} child accounts in database")
         return [account['account_id'] for account in accounts]
     except Exception as e:
-        logger.error(f"Error fetching account IDs: {e}")
+        logger.error(f"Error fetching child account IDs: {e}")
         raise e
 
 def get_crisis_id(connection, crisis_name):
@@ -188,13 +190,13 @@ def store_crisis_alert(connection, account_id, crisis_id, severity, note=None, l
 
 def process_crisis_detection(connection, account_id):
     """
-    Process crisis detection for the latest 10 child messages as a batch
+    Process crisis detection for the latest 5 child messages as a batch
     """
     try:
         logger.info(f"Starting crisis detection for account: {account_id}")
         
-        # Fetch latest 10 child messages
-        messages = fetch_latest_child_messages(connection, account_id, 10)
+        # Fetch latest 5 child messages
+        messages = fetch_latest_child_messages(connection, account_id, 5)
         logger.info(f"Found {len(messages)} child messages to process as batch")
         
         if not messages:
@@ -287,7 +289,7 @@ def process_all_accounts(connection):
         logger.info("Starting crisis detection for all accounts")
 
         # Get all account IDs
-        account_ids = get_all_account_ids(connection)
+        account_ids = get_all_child_account_ids(connection)
 
         if not account_ids:
             logger.info("No accounts found in database")
