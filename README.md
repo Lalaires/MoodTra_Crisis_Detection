@@ -41,7 +41,7 @@ Results are stored in a PostgreSQL database for monitoring and intervention by c
 ```
 Chat Messages (PostgreSQL)
     ↓
-Fetch Latest 10 Messages per Account
+Fetch Latest 5 Teen Messages per Account
     ↓
 Mental Health Diagnosis (Mental Health Diagnosis BERT Model)
     ↓
